@@ -5,6 +5,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 #from BubuDudu import BubuDudu
 
 
@@ -22,6 +23,9 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.alien = pygame.sprite.Group()
+
+        self._create_fleet()
         #self.bubu_dudu = BubuDudu(self)
 
     def run_game(self):
@@ -70,12 +74,18 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+
+    def _create_fleet(self):
+        """Создание флота вторжение"""
+        alien = Alien(self)
+        self.alien.add(alien)
     def _update_screen(self):
         """Обновляет изображения на экране и отображает новый экран."""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+        self.alien.draw(self.screen)
         #self.bubu_dudu.bltime()
         pygame.display.flip()
 
