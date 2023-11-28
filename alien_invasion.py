@@ -23,7 +23,7 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
-        self.alien = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
 
         self._create_fleet()
         #self.bubu_dudu = BubuDudu(self)
@@ -78,14 +78,38 @@ class AlienInvasion:
     def _create_fleet(self):
         """Создание флота вторжение"""
         alien = Alien(self)
-        self.alien.add(alien)
+        alien_height, alien_width = alien.rect.size
+        available_spase_x = self.settings.screen_width - (2 * alien_width)
+        number_alien_x = available_spase_x // (2 * alien_width)
+
+        """Определяет количество рядов"""
+        ship_height = self.ship.rect.height
+        available_spase_y = (self.settings.screen_height -
+                             (3 * alien_height) - ship_height)
+        number_rows = available_spase_y // (2 * alien_height)
+
+        # Создание флота вторжения
+        for row_number in range(number_rows):
+            for alien_number in range(number_alien_x):
+                self._create_alien(alien_number, row_number)
+
+    def _create_alien(self, alien_number, row_number):
+        alien = Alien(self)
+        alien_height, alien_width = alien.rect.size
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+        self.aliens.add(alien)
+
+
+
     def _update_screen(self):
         """Обновляет изображения на экране и отображает новый экран."""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
-        self.alien.draw(self.screen)
+        self.aliens.draw(self.screen)
         #self.bubu_dudu.bltime()
         pygame.display.flip()
 
